@@ -2,20 +2,35 @@ import socket
 
 target = input("Enter target IP: ")
 
-for port in range(1, 1025):
+print(f"\nScanning {target}...\n")
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(0.5)
+# Open the report file
+with open("scan_results.txt", "w") as file:
 
-    result = sock.connect_ex((target, port))
+    file.write(f"Scan Results for {target}\n")
+    file.write("=" * 30 + "\n\n")
 
-    if result == 0:
-        try:
-            service = socket.getservbyport(port)
-        except:
-            service = "Unknown"
+    for port in range(1, 1025):
 
-        print(f"[OPEN] {port} ({service})")
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(0.5)
 
-    sock.close()
+        result = sock.connect_ex((target, port))
+
+        if result == 0:
+
+            try:
+                service = socket.getservbyport(port)
+            except:
+                service = "Unknown"
+
+            output = f"[OPEN] {port} ({service})"
+
+            print(output)          # Display on screen
+            file.write(output + "\n")  # Save to file
+
+        sock.close()
+
+print("\nScan completed!")
+print("Results saved to scan_results.txt")
 
